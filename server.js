@@ -5,6 +5,7 @@ const path = require('path');
 const http = require('http');
 const dotenv = require('dotenv');
 const PuppeteerController = require('./controllers/puppeteerController');
+const { isURL } = require('validator'); // Import isURL from validator
 
 // Load environment variables
 dotenv.config();
@@ -42,8 +43,8 @@ app.use('/screenshots', express.static(path.join(__dirname, 'screenshots')));
 app.post('/api/screenshot', async (req, res) => {
     const { url } = req.body;
 
-    // Basic URL validation
-    if (!url || typeof url !== 'string') {
+    // Basic URL validation using validator
+    if (!url || typeof url !== 'string' || !isURL(url, { protocols: ['http','https'], require_protocol: true })) {
         return res.status(400).json({ success: false, message: 'Invalid URL provided.' });
     }
 
